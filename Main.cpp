@@ -7,6 +7,8 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
+#include <random>
 
 using namespace std; 
 
@@ -59,7 +61,17 @@ int main()
 
 void playGame ()
 {
-    string wordToGuess = "tree";
+    vector<string> wordCollection;
+    wordCollection.push_back("tree");
+    wordCollection.push_back("cat");
+    wordCollection.push_back("cow");
+    
+    
+    mt19937 rng; //random number generator
+    rng.seed(random_device()());
+     // distribution in range [0, the number of items in the collection minus 1]
+    uniform_int_distribution<mt19937::result_type> distribution(0, wordCollection.size() - 1);
+    string wordToGuess = wordCollection[distribution (rng)];
     string wordAfterScramble = scrambleWord(wordToGuess);
     cout << "Guess this word: " << wordAfterScramble << endl;
     string input;
@@ -76,5 +88,16 @@ void playGame ()
 
 string scrambleWord (string word)
 {
+    mt19937 rng;
+    rng.seed(random_device()());
+    uniform_int_distribution<mt19937::result_type> distribution(0, word.size() - 1);
+    for (int index = 0; index < word.size(); index++)
+    {
+        int firstIndex = distribution(rng);
+        int secondIndex = distribution(rng);
+        char temp = word[firstIndex];
+        word[firstIndex] = word[secondIndex];
+        word[secondIndex] = temp;
+    }
     return word;
 }
